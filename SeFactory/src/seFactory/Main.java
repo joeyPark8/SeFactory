@@ -8,6 +8,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
@@ -16,14 +17,23 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements Listener {
     Location cLocation;
     
     @Override
-    public void onEnable() {}
+    public void onEnable() {
+        System.out.println("SeFactory is activated");
+
+        Bukkit.getPluginManager().registerEvents(this, this);
+
+        getCommand("factory").setExecutor(this::onCommand);
+        getCommand("factory").setTabCompleter(this::onTabComplete);
+    }
 
     @Override
-    public void onDisable() {}
+    public void onDisable() {
+        System.out.println("SeFactory is deactivated");
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -31,9 +41,37 @@ public class Main extends JavaPlugin {
         if (command.getName().equalsIgnoreCase("factory")) {
             if (args.length == 0) {
                 sender.sendMessage(ChatColor.GOLD + "We write it 'automation' and read it 'labor'");
+                return false;
             }
             else if (args[0].equalsIgnoreCase("give")) {
-                player.getInventory().addItem(new ItemStack(Material.SMOOTH_STONE_SLAB));
+                if (args[1].equalsIgnoreCase("@all")) {
+                    return false;
+                }
+                else if (args[1].equalsIgnoreCase("@local")) {
+                    ItemStack stack = new ItemStack(Material.SMOOTH_STONE_SLAB);
+                    stack.getItemMeta().setDisplayName("conveyor");
+
+                    player.getInventory().addItem(stack);
+
+                    return false;
+                }
+                else if (args[2].equalsIgnoreCase("@random")) {
+                    return false;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (args[0].equalsIgnoreCase("operate")) {
+                if (args[1].equalsIgnoreCase("start")) {
+
+                }
+                else if (args[1].equalsIgnoreCase("stop")) {
+
+                }
+            }
+            else {
+                return false;
             }
         }
         return true;

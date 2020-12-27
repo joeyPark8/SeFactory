@@ -1,0 +1,7 @@
+name: SeFactory
+version: 1.0
+main: seFactory.Main
+
+commands:
+  factory:
+    aliases: [ft]
