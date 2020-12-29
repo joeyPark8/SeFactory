@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class Main extends JavaPlugin implements Listener {
     Location cLocation;
+    boolean operate = false;
     
     @Override
     public void onEnable() {
@@ -49,7 +51,10 @@ public class Main extends JavaPlugin implements Listener {
                 }
                 else if (args[1].equalsIgnoreCase("@local")) {
                     ItemStack stack = new ItemStack(Material.SMOOTH_STONE_SLAB);
-                    stack.getItemMeta().setDisplayName("conveyor");
+                    ItemMeta meta = stack.getItemMeta();
+
+                    meta.setDisplayName("conveyor");
+                    stack.setItemMeta(meta);
 
                     player.getInventory().addItem(stack);
 
@@ -64,10 +69,22 @@ public class Main extends JavaPlugin implements Listener {
             }
             else if (args[0].equalsIgnoreCase("operate")) {
                 if (args[1].equalsIgnoreCase("start")) {
-
+                    if (!operate) {
+                        player.sendMessage(ChatColor.GOLD + "factory operate: " + ChatColor.AQUA + "start");
+                        operate = true;
+                    }
+                    else {
+                        player.sendMessage(ChatColor.RED + "factory has already started to operate");
+                    }
                 }
                 else if (args[1].equalsIgnoreCase("stop")) {
-
+                    if (operate) {
+                        player.sendMessage(ChatColor.GOLD + "factory operate: " + ChatColor.AQUA + "stop");
+                        operate = false;
+                    }
+                    else {
+                        player.sendMessage(ChatColor.RED + "factory has already stopped to operate");
+                    }
                 }
             }
             else {
@@ -84,6 +101,7 @@ public class Main extends JavaPlugin implements Listener {
                 List<String> type = new ArrayList<>();
 
                 type.add("give");
+                type.add("operate");
 
                 return type;
             }
@@ -103,6 +121,14 @@ public class Main extends JavaPlugin implements Listener {
 
                     return targets;
                 }
+                else if (args[0].equalsIgnoreCase("operate")) {
+                    List<String> type = new ArrayList<>();
+
+                    type.add("start");
+                    type.add("stop");
+
+                    return type;
+                }
             }
         }
         return null;
@@ -113,8 +139,7 @@ public class Main extends JavaPlugin implements Listener {
         Player player = e.getPlayer();
 
         if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
-            cLocation = new Location(player.getWorld(), (int)player.getEyeLocation().getX(), (int)player.getEyeLocation().getY(), (int)player.getEyeLocation().getZ());
-            player.getWorld().spawnFallingBlock(cLocation, Material.POLISHED_DIORITE_SLAB, (byte) 0);
+            player.sendMessage("good");
         }
     }
     
@@ -122,7 +147,8 @@ public class Main extends JavaPlugin implements Listener {
     public void onSwapItemInHand(PlayerSwapHandItemsEvent e) {
         Player player = e.getPlayer();
 
-        if (player.getInventory().getItemInOffHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
+        if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
+            cLocation = player.getTargetBlock(null, 50).getLocation();
             cLocation.getBlock().setType(Material.SMOOTH_STONE_SLAB);
             e.setCancelled(true);
         }
