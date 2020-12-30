@@ -141,11 +141,11 @@ public class Main extends JavaPlugin implements Listener {
 
         if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
             player.sendMessage("good");
-            FallingBlock block = player.getWorld().spawnFallingBlock(player.getLocation(), Material.POLISHED_DIORITE_SLAB, (byte) 0);
+            FallingBlock block = player.getWorld().spawnFallingBlock(player.getTargetBlock(null, 50).getLocation(), Material.POLISHED_DIORITE_SLAB, (byte) 0);
             block.setGravity(false);
         }
         else {
-
+            player.sendMessage("good");
         }
     }
     
