@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.FallingBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -140,6 +141,11 @@ public class Main extends JavaPlugin implements Listener {
 
         if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
             player.sendMessage("good");
+            FallingBlock block = player.getWorld().spawnFallingBlock(player.getLocation(), Material.POLISHED_DIORITE_SLAB, (byte) 0);
+            block.setGravity(false);
+        }
+        else {
+
         }
     }
     
