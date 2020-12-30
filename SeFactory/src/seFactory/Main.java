@@ -15,6 +15,7 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,15 +139,22 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler
     public void itemHeld(PlayerItemHeldEvent e) {
         Player player = e.getPlayer();
+        FallingBlock block = player.getWorld().spawnFallingBlock(player.getLocation(), Material.POLISHED_ANDESITE_SLAB, (byte) 0);
+        block.setGravity(false);
 
-        if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
-            player.sendMessage("good");
-            FallingBlock block = player.getWorld().spawnFallingBlock(player.getTargetBlock(null, 50).getLocation(), Material.POLISHED_DIORITE_SLAB, (byte) 0);
-            block.setGravity(false);
-        }
-        else {
-            player.sendMessage("good");
-        }
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("conveyor")) {
+                    block.teleport(player.getTargetBlock(null, 50).getLocation());
+                }
+                else {
+                    player.sendMessage("remove block");
+                    block.remove();
+                    cancel();
+                }
+            }
+        }.runTaskTimer(this, 0, 2);
     }
     
     @EventHandler
